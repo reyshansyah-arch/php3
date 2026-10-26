@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="id" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXTPLAY RENTAL - Play Your Way, Anytime.</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0B0F19',
+                            card: '#151C2C',
+                            surface: '#1E293B',
+                            accent: '#00F0FF',
+                            purple: '#7000FF',
+                            neonPink: '#FF007A',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        heading: ['Orbitron', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'neon-blue': '0 0 20px rgba(0, 240, 255, 0.35)',
+                        'neon-purple': '0 0 20px rgba(112, 0, 255, 0.35)',
+                        'glow': '0 0 30px rgba(0, 240, 255, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & Lucide Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #080B11;
+            color: #F1F5F9;
+        }
+        .font-heading {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glass-card {
+            background: rgba(21, 28, 44, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+            transform: translateY(-4px);
+        }
+        .neon-text-blue {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+        }
+        .neon-text-purple {
+            text-shadow: 0 0 10px rgba(112, 0, 255, 0.6);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7000FF;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" onclick="showSection('home')" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-fuchsia-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-gamepad text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-heading font-black text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">NEXTPLAY</span>
+                    <span class="block text-[10px] tracking-widest text-cyan-400 font-bold uppercase -mt-1">RENTAL</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
+                <button onclick="showSection('home')" class="nav-btn text-cyan-400 hover:text-cyan-300 transition-colors">Beranda</button>
+                <button onclick="showSection('catalog')" class="nav-btn text-slate-300 hover:text-cyan-400 transition-colors">Daftar PlayStation</button>
+                <button onclick="showSection('packages')" class="nav-btn text-slate-300 hover:text-cyan-400 transition-colors">Paket Rental</button>
+                <button onclick="showSection('games')" class="nav-btn text-slate-300 hover:text-cyan-400 transition-colors">Katalog Game</button>
+                <button onclick="showSection('location')" class="nav-btn text-slate-300 hover:text-cyan-400 transition-colors">Lokasi & FAQ</button>
+                <button onclick="showSection('docs')" class="nav-btn text-amber-400 hover:text-amber-300 transition-colors font-semibold"><i class="fa-solid fa-code text-xs mr-1"></i> Dokumentasi Backend</button>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="hidden lg:flex items-center space-x-4">
+                <button onclick="openBookingModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm shadow-neon-blue hover:shadow-cyan-500/50 transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Booking Sekarang</span>
+                </button>
+                <div id="userAuthBtns" class="flex items-center space-x-2">
+                    <button onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition">
+                        Login
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-cyan-400">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Nav -->
+        <div id="mobileMenu" class="hidden lg:hidden glass-card border-b border-slate-800 px-4 pt-3 pb-6 space-y-3">
+            <button onclick="showSection('home'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded-lg text-slate-200 hover:bg-slate-800">Beranda</button>
+            <button onclick="showSection('catalog'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded-lg text-slate-200 hover:bg-slate-800">Daftar PlayStation</button>
+            <button onclick="showSection('packages'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded-lg text-slate-200 hover:bg-slate-800">Paket Rental</button>
+            <button onclick="showSection('games'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded-lg text-slate-200 hover:bg-slate-800">Katalog Game</button>
+            <button onclick="showSection('location'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded-lg text-slate-200 hover:bg-slate-800">Lokasi & FAQ</button>
+            <button onclick="showSection('docs'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded-lg text-amber-400 hover:bg-slate-800"><i class="fa-solid fa-code text-xs mr-1"></i> Dokumentasi Backend</button>
+            <div class="pt-3 border-t border-slate-800 flex flex-col gap-2">
+                <button onclick="openBookingModal(); toggleMobileMenu();" class="w-full py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-center">Booking Sekarang</button>
+                <button onclick="openAuthModal('login'); toggleMobileMenu();" class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 font-medium text-center">Login / Account</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow">
+
+        <section id="sec-home" class="space-y-20 pb-16">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/40 via-brand-dark to-brand-dark -z-10"></div>
+                <!-- Glowing BG Orbs -->
+                <div class="absolute top-1/4 left-10 w-72 h-72 bg-cyan-500/10 rounded-full filter blur-3xl pointer-events-none"></div>
+                <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-600/10 rounded-full filter blur-3xl pointer-events-none"></div>
+
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                            <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-widest">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                                <span>Platform Rental PlayStation Generasi PS1 - PS5</span>
+                            </div>
+                            <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+                                Pengalaman Gaming <br class="hidden sm:inline"/>
+                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500 neon-text-blue">Terbaik Dimulai</span> Di Sini.
+                            </h1>
+                            <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 font-normal">
+                                Nikmati nostalgia masa kecil hingga grafis Next-Gen terbaru! Kami menyediakan unit konsol PlayStation 1 hingga PlayStation 5 original, terawat, controller responsif, TV 4K, dan koleksi 500+ game terlengkap.
+                            </p>
+                            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                                <button onclick="openBookingModal()" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-base shadow-neon-blue hover:scale-105 transition-all flex items-center justify-center space-x-2">
+                                    <span>Booking Sekarang</span>
+                                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                                </button>
+                                <button onclick="showSection('catalog')" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 font-semibold text-base border border-slate-700/80 transition-all flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-list-check"></i>
+                                    <span>Lihat Semua Konsol</span>
+                                </button>
+                            </div>
+                            <p class="text-xs text-slate-500 pt-2"><i class="fa-solid fa-shield-halved text-cyan-400 mr-1"></i> Unit Higienis, Stik Presisi, & Jaminan Bebas Lag.</p>
+                        </div>
+
+                        <!-- Visual Console Showcase -->
+                        <div class="lg:col-span-5 relative">
+                            <div class="relative mx-auto max-w-md lg:max-w-none">
+                                <div class="glass-card rounded-3xl p-6 border-cyan-500/30 relative z-10 shadow-2xl shadow-indigo-950/50">
+                                    <div class="relative h-64 sm:h-80 rounded-2xl overflow-hidden bg-gradient-to-b from-slate-800 to-slate-900 flex items-center justify-center">
+                                        <img id="heroConsoleImg" src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=80" alt="PS5 Console Showcase" class="object-cover w-full h-full transform hover:scale-105 transition duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                                        <div class="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                                            <div>
+                                                <span class="px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">FLAGSHIP</span>
+                                                <h3 class="font-heading font-bold text-lg text-white mt-1">PlayStation 5 Digital & Disc</h3>
+                                            </div>
+                                            <span class="text-cyan-400 font-bold text-sm bg-slate-950/80 px-3 py-1 rounded-lg border border-slate-800">Rp 20.000 / Jam</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+                                        <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                                            <i class="fa-solid fa-tv text-cyan-400 text-lg mb-1 block"></i>
+                                            <span class="text-slate-300 block font-medium">TV 4K HDR 55"</span>
+                                        </div>
+                                        <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                                            <i class="fa-solid fa-gamepad text-purple-400 text-lg mb-1 block"></i>
+                                            <span class="text-slate-300 block font-medium">2 Stik DualSense</span>
+                                        </div>
+                                        <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                                            <i class="fa-solid fa-couch text-emerald-400 text-lg mb-1 block"></i>
+                                            <span class="text-slate-300 block font-medium">Sofa Gaming VIP</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="glass-card rounded-2xl p-5 border-slate-800 text-center hover:border-cyan-500/30 transition">
+                        <div class="text-3xl sm:text-4xl font-heading font-black text-cyan-400">28+</div>
+                        <div class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Konsol PS Ready</div>
+                        <span class="text-[10px] text-slate-500 block mt-0.5">(PS1 s/d PS5 Ready)</span>
+                    </div>
+                    <div class="glass-card rounded-2xl p-5 border-slate-800 text-center hover:border-indigo-500/30 transition">
+                        <div class="text-3xl sm:text-4xl font-heading font-black text-indigo-400">550+</div>
+                        <div class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Koleksi Game Populer</div>
+                        <span class="text-[10px] text-slate-500 block mt-0.5">(Retro & AAA Titles)</span>
+                    </div>
+                    <div class="glass-card rounded-2xl p-5 border-slate-800 text-center hover:border-purple-500/30 transition">
+                        <div class="text-3xl sm:text-4xl font-heading font-black text-purple-400">4,800+</div>
+                        <div class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Pelanggan Puas</div>
+                        <span class="text-[10px] text-slate-500 block mt-0.5">(Sejak Tahun 2021)</span>
+                    </div>
+                    <div class="glass-card rounded-2xl p-5 border-slate-800 text-center hover:border-emerald-500/30 transition">
+                        <div class="text-3xl sm:text-4xl font-heading font-black text-emerald-400">4.9 / 5</div>
+                        <div class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Rating Kepuasan</div>
+                        <span class="text-[10px] text-emerald-400/80 block mt-0.5">★★★★★ (Google Review)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                    <div>
+                        <span class="text-cyan-400 text-xs font-bold uppercase tracking-wider">Generasi PlayStation</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-white mt-1">Pilih Generasi Favoritmu</h2>
+                    </div>
+                    <button onclick="showSection('catalog')" class="mt-4 md:mt-0 text-cyan-400 hover:text-cyan-300 text-sm font-semibold flex items-center space-x-2">
+                        <span>Lihat Katalog Lengkap & Filter</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5" id="homeConsoleGrid">
+                    <!-- Dynamic Rendering via JS -->
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-card rounded-3xl p-8 lg:p-12 border-slate-800 relative overflow-hidden">
+                    <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl"></div>
+                    <div class="text-center max-w-2xl mx-auto mb-12">
+                        <span class="text-cyan-400 text-xs font-bold uppercase tracking-wider">Mengapa Memilih Kami</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-white mt-1">Keunggulan NEXTPLAY RENTAL</h2>
+                        <p class="text-slate-400 text-sm mt-2">Kami mengutamakan kualitas tempat, kenyamanan tempat duduk, kebersihan controller, dan kecepatan booking online.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 text-xl">
+                                <i class="fa-solid fa-headset"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-base">Konsol PS1 s/d PS5 Lengkap</h3>
+                                <p class="text-slate-400 text-sm mt-1">Satu-satunya tempat rental yang menyediakan dari era nostalgia konsol vintage hingga Next-Gen graphics 4K 120 FPS.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0 text-xl">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-base">Stik/Controller Terawat</h3>
+                                <p class="text-slate-400 text-sm mt-1">Semua controller diservis berkala, analog presisi tanpa drifting, dan selalu didisinfeksi setelah penyewaan.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-fuchsia-500/10 border border-fuchsia-500/30 flex items-center justify-center text-fuchsia-400 shrink-0 text-xl">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-base">Booking Instan via WhatsApp</h3>
+                                <p class="text-slate-400 text-sm mt-1">Sistem booking real-time anti-bentrok jadwal dengan konfirmasi otomatis langsung ke WhatsApp resmi kami.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-catalog" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                <div>
+                    <h1 class="font-heading text-3xl font-bold text-white">Daftar PlayStation (PS1 - PS5)</h1>
+                    <p class="text-slate-400 text-sm mt-1">Pilih konsol impianmu dengan harga transparan dan fasilitas lengkap.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterConsoleByGen('ALL')" class="gen-filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition bg-cyan-500 text-slate-950">SEMUA</button>
+                    <button onclick="filterConsoleByGen('PS5')" class="gen-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700">PS5</button>
+                    <button onclick="filterConsoleByGen('PS4')" class="gen-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700">PS4</button>
+                    <button onclick="filterConsoleByGen('PS3')" class="gen-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700">PS3</button>
+                    <button onclick="filterConsoleByGen('PS2')" class="gen-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700">PS2</button>
+                    <button onclick="filterConsoleByGen('PS1')" class="gen-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700">PS1 RETRO</button>
+                </div>
+            </div>
+
+            <!-- Controls (Search & Sort) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                    <input type="text" id="consoleSearchInput" onkeyup="renderCatalogGrid()" placeholder="Cari unit konsol..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <select id="consoleStatusFilter" onchange="renderCatalogGrid()" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-sm focus:outline-none focus:border-cyan-500">
+                        <option value="ALL">Semua Status Ketersediaan</option>
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Sedang Disewa">Sedang Disewa</option>
+                        <option value="Maintenance">Maintenance</option>
+                    </select>
+                </div>
+                <div>
+                    <select id="consoleSortFilter" onchange="renderCatalogGrid()" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-sm focus:outline-none focus:border-cyan-500">
+                        <option value="default">Urutkan Harga</option>
+                        <option value="low">Harga Terendah -&gt; Tertinggi</option>
+                        <option value="high">Harga Tertinggi -&gt; Terendah</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Catalog Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="catalogConsoleGrid">
+                <!-- Dynamic Content JS -->
+            </div>
+        </section>
+
+        <section id="sec-packages" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="text-center max-w-2xl mx-auto">
+                <span class="text-cyan-400 text-xs font-bold uppercase tracking-wider">Hemat & Praktis</span>
+                <h1 class="font-heading text-3xl font-bold text-white mt-1">Paket Rental Spesial</h1>
+                <p class="text-slate-400 text-sm mt-2">Dapatkan potongan harga khusus untuk durasi sewa lebih lama atau paket mabar rame-rame!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="packagesGrid">
+                <!-- Rendered Dynamically -->
+            </div>
+        </section>
+
+        <section id="sec-games" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                <div>
+                    <h1 class="font-heading text-3xl font-bold text-white">Katalog Game Lengkap</h1>
+                    <p class="text-slate-400 text-sm mt-1">Lebih dari 500+ judul game siap dimainkan di tempat atau sewa ke rumah.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <input type="text" id="gameSearchInput" onkeyup="renderGamesGrid()" placeholder="Cari judul game (e.g. FIFA, God of War)..." class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-cyan-500 w-64">
+                    <select id="gamePlatformFilter" onchange="renderGamesGrid()" class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-sm focus:outline-none focus:border-cyan-500">
+                        <option value="ALL">Semua Platform</option>
+                        <option value="PS5">PlayStation 5</option>
+                        <option value="PS4">PlayStation 4</option>
+                        <option value="PS3">PlayStation 3</option>
+                        <option value="PS2">PlayStation 2</option>
+                        <option value="PS1">PlayStation 1</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4" id="gamesGrid">
+                <!-- Rendered dynamically -->
+            </div>
+        </section>
+
+        <section id="sec-location" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Location Info -->
+                <div class="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-8 border-slate-800 space-y-6">
+                    <div>
+                        <span class="text-cyan-400 text-xs font-bold uppercase tracking-wider">Kunjungi Arena Kami</span>
+                        <h2 class="font-heading text-2xl font-bold text-white mt-1">Lokasi & Jam Operasional</h2>
+                    </div>
+
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-location-dot text-cyan-400 text-lg mt-1"></i>
+                            <div>
+                                <span class="font-bold text-white block">NEXTPLAY Gaming Arena Center</span>
+                                <span>Jl. Gaming Hub No. 88, Sektor 7, Jakarta Selatan / BSD Cyber</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-clock text-indigo-400 text-lg mt-1"></i>
+                            <div>
+                                <span class="font-bold text-white block">Jam Buka</span>
+                                <span>Senin - Minggu: 09.00 - 24.00 WIB (Sewa On-Site)</span><br>
+                                <span class="text-xs text-slate-400">Sewa Bawa Pulang: Layanan 24 Jam via WhatsApp</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-brands fa-whatsapp text-emerald-400 text-lg mt-1"></i>
+                            <div>
+                                <span class="font-bold text-white block">WhatsApp Hotline</span>
+                                <span>085710683988 (Admin Respon Cepat)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800">
+                        <a href="https://maps.google.com" target="_blank" class="block text-center py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 font-semibold text-sm border border-slate-700 transition">
+                            <i class="fa-solid fa-map-location-dot mr-2"></i> Buka Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 border-slate-800 space-y-6">
+                    <div>
+                        <span class="text-cyan-400 text-xs font-bold uppercase tracking-wider">Pertanyaan Umum</span>
+                        <h2 class="font-heading text-2xl font-bold text-white mt-1">FAQ Rental PlayStation</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                            <h3 class="font-bold text-white text-sm flex items-center justify-between">
+                                <span>Apa saja syarat sewa konsol bawa pulang?</span>
+                                <i class="fa-solid fa-circle-question text-cyan-400"></i>
+                            </h3>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                Cukup melampirkan foto E-KTP asli, bersedia diverifikasi alamat domisili, dan deposit jaminan (atau KTP asli ditinggal selama durasi penyewaan).
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                            <h3 class="font-bold text-white text-sm flex items-center justify-between">
+                                <span>Apakah bisa booking tempat bermain (On-Site) terlebih dahulu?</span>
+                                <i class="fa-solid fa-circle-question text-cyan-400"></i>
+                            </h3>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                Sangat disarankan booking online agar tidak kehabisan unit PS5/PS4 di jam sibuk (malam/akhir pekan).
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                            <h3 class="font-bold text-white text-sm flex items-center justify-between">
+                                <span>Bagaimana jika controller rusak saat disewa?</span>
+                                <i class="fa-solid fa-circle-question text-cyan-400"></i>
+                            </h3>
+                            <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                                Kerusakan minor atau pemakaian normal tidak dikenakan denda. Denda hanya berlaku jika terjadi benturan keras, terkena cairan, atau kelalaian disengaja.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-user-dashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-2xl font-bold text-white shadow-neon-blue">
+                        <span id="userAvatarText">U</span>
+                    </div>
+                    <div>
+                        <h1 id="userDashboardName" class="font-heading text-2xl font-bold text-white">Akun Pelanggan</h1>
+                        <p id="userDashboardPhone" class="text-slate-400 text-sm">+62 812-xxxx-xxxx</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="openBookingModal()" class="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400 transition">
+                        + Booking Baru
+                    </button>
+                    <button onclick="logoutUser()" class="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/20 transition">
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Booking History Table -->
+            <div class="glass-card rounded-3xl p-6 border-slate-800">
+                <h2 class="font-heading text-lg font-bold text-white mb-4">Riwayat Booking Anda</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900/80 text-xs uppercase text-slate-400 font-semibold border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Kode Booking</th>
+                                <th class="p-3">Konsol & Paket</th>
+                                <th class="p-3">Tanggal & Jam</th>
+                                <th class="p-3">Total Bayar</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userBookingHistoryTable" class="divide-y divide-slate-800">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-admin" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                <div>
+                    <span class="text-cyan-400 text-xs font-bold uppercase tracking-wider">Super Administrator</span>
+                    <h1 class="font-heading text-3xl font-bold text-white mt-1">Dashboard Management NEXTPLAY</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-bold">
+                        <i class="fa-solid fa-circle text-[8px] mr-1.5 animate-pulse"></i> Systems Live
+                    </span>
+                    <button onclick="showSection('home')" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold">Keluar Admin</button>
+                </div>
+            </div>
+
+            <!-- Admin Stats Summary -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="glass-card rounded-2xl p-5 border-slate-800">
+                    <div class="text-xs text-slate-400 font-medium uppercase">Total Pendapatan (Demo)</div>
+                    <div class="text-2xl font-heading font-bold text-emerald-400 mt-2" id="admTotalIncome">Rp 4.850.000</div>
+                    <div class="text-[10px] text-slate-500 mt-1">+18% dari minggu lalu</div>
+                </div>
+                <div class="glass-card rounded-2xl p-5 border-slate-800">
+                    <div class="text-xs text-slate-400 font-medium uppercase">Total Pesanan</div>
+                    <div class="text-2xl font-heading font-bold text-cyan-400 mt-2" id="admTotalBookings">24 Pesanan</div>
+                    <div class="text-[10px] text-slate-500 mt-1">Real-time update</div>
+                </div>
+                <div class="glass-card rounded-2xl p-5 border-slate-800">
+                    <div class="text-xs text-slate-400 font-medium uppercase">Unit Konsol Aktif</div>
+                    <div class="text-2xl font-heading font-bold text-indigo-400 mt-2" id="admActiveConsoles">12 / 15 Unit</div>
+                    <div class="text-[10px] text-slate-500 mt-1">3 Unit Maintenance</div>
+                </div>
+                <div class="glass-card rounded-2xl p-5 border-slate-800">
+                    <div class="text-xs text-slate-400 font-medium uppercase">Menunggu Konfirmasi</div>
+                    <div class="text-2xl font-heading font-bold text-amber-400 mt-2" id="admPendingCount">3 Booking</div>
+                    <div class="text-[10px] text-amber-400/80 mt-1">Butuh Verifikasi Admin</div>
+                </div>
+            </div>
+
+            <!-- Management Tabs -->
+            <div class="glass-card rounded-3xl p-6 border-slate-800 space-y-6">
+                <div class="flex border-b border-slate-800 space-x-4 overflow-x-auto">
+                    <button onclick="switchAdminTab('bookings')" id="tabBtnBookings" class="pb-3 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm whitespace-nowrap">Kelola Booking</button>
+                    <button onclick="switchAdminTab('consoles')" id="tabBtnConsoles" class="pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm whitespace-nowrap">Manajemen Konsol (CRUD)</button>
+                    <button onclick="switchAdminTab('games')" id="tabBtnGames" class="pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm whitespace-nowrap">Manajemen Game</button>
+                </div>
+
+                <!-- Admin Tab 1: Bookings Management -->
+                <div id="admTabBookings" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-white text-base">Daftar Transaksi Penyewaan</h3>
+                        <span class="text-xs text-slate-400">Ubah status pesanan secara langsung</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900 text-xs uppercase text-slate-400 font-semibold">
+                                <tr>
+                                    <th class="p-3">Kode</th>
+                                    <th class="p-3">Penyewa</th>
+                                    <th class="p-3">Konsol</th>
+                                    <th class="p-3">Durasi</th>
+                                    <th class="p-3">Total</th>
+                                    <th class="p-3">Status Saat Ini</th>
+                                    <th class="p-3">Aksi Admin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminBookingsTable" class="divide-y divide-slate-800">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 2: Consoles Management (CRUD) -->
+                <div id="admTabConsoles" class="hidden space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-white text-base">Daftar Unit PlayStation</h3>
+                        <button onclick="openAddConsoleModal()" class="px-3.5 py-2 rounded-xl bg-cyan-500 text-slate-950 text-xs font-bold hover:bg-cyan-400 transition flex items-center space-x-1">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Tambah Unit Konsol Baru</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900 text-xs uppercase text-slate-400 font-semibold">
+                                <tr>
+                                    <th class="p-3">Gambar</th>
+                                    <th class="p-3">Nama Konsol</th>
+                                    <th class="p-3">Gen</th>
+                                    <th class="p-3">Harga / Jam</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminConsolesTable" class="divide-y divide-slate-800">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 3: Games Management -->
+                <div id="admTabGames" class="hidden space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-white text-base">Daftar Judul Game Ready</h3>
+                        <button onclick="alert('Fitur Tambah Game Baru siap dihubungkan ke backend MySQL/Postgres!')" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-500 transition">
+                            + Tambah Game Baru
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-400">Total 12 Game terdaftar dalam katalog aktif saat ini.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-docs" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="glass-card rounded-3xl p-8 border-amber-500/30 space-y-6">
+                <div>
+                    <span class="text-amber-400 text-xs font-bold uppercase tracking-wider"><i class="fa-solid fa-code"></i> Developer & Architecture Guide</span>
+                    <h1 class="font-heading text-3xl font-bold text-white mt-1">Dokumentasi Backend & Skema Database</h1>
+                    <p class="text-slate-400 text-sm mt-1">Panduan lengkap migrasi dari Web Frontend Demo ke Backend Produksi (Node.js/Express + PostgreSQL/MySQL + Payment Gateway).</p>
+                </div>
+
+                <!-- Sub-tabs for Docs -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- DB Schema -->
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                        <h3 class="text-cyan-400 font-bold text-sm uppercase flex items-center">
+                            <i class="fa-solid fa-database mr-2"></i> Skema Tabel PostgreSQL (Migration SQL)
+                        </h3>
+                        <pre class="bg-slate-900 p-4 rounded-xl text-xs text-emerald-400 font-mono overflow-x-auto leading-relaxed border border-slate-800">
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    whatsapp VARCHAR(20) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(10) DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE consoles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    generation VARCHAR(10) NOT NULL, -- PS1, PS2, PS3, PS4, PS5
+    price_per_hour INT NOT NULL,
+    status VARCHAR(20) DEFAULT 'Tersedia',
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE bookings (
+    id SERIAL PRIMARY KEY,
+    booking_code VARCHAR(20) UNIQUE NOT NULL,
+    user_id INT REFERENCES users(id),
+    console_id INT REFERENCES consoles(id),
+    start_time TIMESTAMP NOT NULL,
+    duration_hours INT NOT NULL,
+    total_price INT NOT NULL,
+    payment_status VARCHAR(30) DEFAULT 'Menunggu Konfirmasi',
+    whatsapp_notified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</pre>
+                    </div>
+
+                    <!-- API Specs -->
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                        <h3 class="text-purple-400 font-bold text-sm uppercase flex items-center">
+                            <i class="fa-solid fa-network-wired mr-2"></i> Endpoint API RESTful
+                        </h3>
+                        <div class="text-xs space-y-2 text-slate-300">
+                            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 font-mono">
+                                <span class="text-emerald-400 font-bold">GET</span> /api/v1/consoles
+                                <span class="text-slate-500 block text-[11px] font-sans">Mendapatkan seluruh daftar konsol & status ketersediaan.</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 font-mono">
+                                <span class="text-cyan-400 font-bold">POST</span> /api/v1/bookings
+                                <span class="text-slate-500 block text-[11px] font-sans">Membuat pesanan sewa baru (Validasi bentrok jam otomatis).</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 font-mono">
+                                <span class="text-amber-400 font-bold">PUT</span> /api/v1/admin/bookings/:id/status
+                                <span class="text-slate-500 block text-[11px] font-sans">Update status sewa & pembayaran oleh Admin.</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 font-mono">
+                                <span class="text-fuchsia-400 font-bold">POST</span> /api/v1/payments/webhook
+                                <span class="text-slate-500 block text-[11px] font-sans">Webhook verifikasi callback Midtrans / Xendit.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs leading-relaxed">
+                    <strong>Catatan Keamanan Backend:</strong> Password harus di-hash menggunakan <code>bcrypt</code> minimal 10 salt rounds. Kunci API Midtrans/Xendit dan kredensial database WAJIB disimpan di file <code>.env</code> terisolasi di server.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="bookingModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+        <div class="glass-card rounded-3xl max-w-2xl w-full p-6 sm:p-8 border-cyan-500/30 shadow-2xl relative my-8">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                <div>
+                    <span class="text-cyan-400 text-xs font-bold uppercase tracking-wider">NEXTPLAY Rental System</span>
+                    <h2 class="font-heading text-xl font-bold text-white">Formulir Booking Unit</h2>
+                </div>
+                <button onclick="closeBookingModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form id="bookingForm" onsubmit="handleBookingSubmit(event)" class="space-y-4 mt-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap *</label>
+                        <input type="text" id="bookName" required placeholder="Contoh: Budi Santoso" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Nomor WhatsApp *</label>
+                        <input type="tel" id="bookPhone" required placeholder="081234567890" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Pilih Unit PlayStation *</label>
+                        <select id="bookConsoleSelect" onchange="updateBookingCalc()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                            <!-- Populated via JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Pilih Paket Rental *</label>
+                        <select id="bookPackageSelect" onchange="updateBookingCalc()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                            <option value="perhour">Per Jam (Regular)</option>
+                            <option value="3hours">Paket Hemat 3 Jam (Diskon 10%)</option>
+                            <option value="6hours">Paket Maraton 6 Jam (Diskon 20%)</option>
+                            <option value="fullday">Paket Harian (24 Jam Bawa Pulang)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Tanggal Sewa *</label>
+                        <input type="date" id="bookDate" required onchange="updateBookingCalc()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Jam Mulai *</label>
+                        <input type="time" id="bookTime" required onchange="updateBookingCalc()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Durasi (Jam) *</label>
+                        <input type="number" id="bookDuration" min="1" max="24" value="2" onchange="updateBookingCalc()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Metode Pembayaran</label>
+                    <select id="bookPaymentMethod" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                        <option value="QRIS / Transfer Bank">QRIS / Transfer Bank (Otomatis Check)</option>
+                        <option value="Tunai di Kasir">Bayar Tunai / Cash di Kasir Arena</option>
+                    </select>
+                </div>
+
+                <!-- Live Price Calculation Box -->
+                <div class="p-4 rounded-2xl bg-slate-900/90 border border-cyan-500/30 space-y-2 text-xs">
+                    <div class="flex justify-between text-slate-400">
+                        <span>Harga Satuan Konsol:</span>
+                        <span id="calcBasePrice" class="text-slate-200 font-mono">Rp 0 / jam</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span>Estimasi Diskon Paket:</span>
+                        <span id="calcDiscount" class="text-emerald-400 font-mono">- Rp 0</span>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-sm font-bold">
+                        <span class="text-white">Total Biaya Estimasi:</span>
+                        <span id="calcTotalPrice" class="text-cyan-400 text-lg font-heading">Rp 0</span>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex items-center space-x-3 pt-2">
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm shadow-neon-blue transition flex items-center justify-center space-x-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span>Konfirmasi & Order via WhatsApp</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 border-slate-800 relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="loginBox">
+                <h2 class="font-heading text-xl font-bold text-white mb-1">Masuk Akun Pelanggan</h2>
+                <p class="text-xs text-slate-400 mb-6">Akses riwayat penyewaan dan poin member kamu.</p>
+                
+                <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Nomor WhatsApp / Email</label>
+                        <input type="text" id="loginUser" required placeholder="08123456789" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                        <input type="password" id="loginPass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold text-sm hover:bg-cyan-400 transition">
+                        Login
+                    </button>
+                </form>
+                <p class="text-xs text-center text-slate-400 mt-4">
+                    Atau masuk sebagai Admin? <a href="#" onclick="loginAsAdminDemo()" class="text-cyan-400 font-bold hover:underline">Demo Mode Admin</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="addConsoleModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 border-cyan-500/30 relative">
+            <button onclick="closeAddConsoleModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h2 class="font-heading text-lg font-bold text-white mb-4">Tambah Unit PlayStation Baru</h2>
+            <form onsubmit="handleAddConsoleSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Nama Konsol</label>
+                    <input type="text" id="newConsName" required placeholder="e.g. PlayStation 5 Dual Controller" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Generasi</label>
+                    <select id="newConsGen" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
+                        <option value="PS5">PlayStation 5</option>
+                        <option value="PS4">PlayStation 4</option>
+                        <option value="PS3">PlayStation 3</option>
+                        <option value="PS2">PlayStation 2</option>
+                        <option value="PS1">PlayStation 1</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Harga per Jam (IDR)</label>
+                    <input type="number" id="newConsPrice" required placeholder="20000" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">URL Gambar Konsol</label>
+                    <input type="url" id="newConsImg" placeholder="https://..." class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs mt-2">Simpan Konsol Baru</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="glass-card border-t border-slate-800 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Col 1 -->
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-500 flex items-center justify-center text-slate-950 font-bold">
+                            <i class="fa-solid fa-gamepad"></i>
+                        </div>
+                        <span class="font-heading font-black text-lg text-white">NEXTPLAY</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Pusat sewa konsol PlayStation terlengkap dari era klasik PS1 hingga era Next-Gen PS5. “Play Your Way, Anytime.”
+                    </p>
+                </div>
+
+                <!-- Col 2 -->
+                <div>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Navigasi Cepat</h4>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li><a href="#" onclick="showSection('home')" class="hover:text-cyan-400">Beranda Utama</a></li>
+                        <li><a href="#" onclick="showSection('catalog')" class="hover:text-cyan-400">Daftar Konsol PS1-PS5</a></li>
+                        <li><a href="#" onclick="showSection('packages')" class="hover:text-cyan-400">Paket Hemat Rental</a></li>
+                        <li><a href="#" onclick="showSection('games')" class="hover:text-cyan-400">Katalog Game</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3 -->
+                <div>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Metode Pembayaran</h4>
+                    <p class="text-xs text-slate-400 mb-2">Mendukung Pembayaran Digital & Tunai:</p>
+                    <div class="flex flex-wrap gap-2 text-slate-300 text-xs">
+                        <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">QRIS</span>
+                        <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">BCA</span>
+                        <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">Mandiri</span>
+                        <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">GoPay / OVO</span>
+                    </div>
+                </div>
+
+                <!-- Col 4 -->
+                <div>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Hubungi Admin</h4>
+                    <p class="text-xs text-slate-400">Pertanyaan seputar sewa bawa pulang atau booking tempat:</p>
+                    <a href="https://wa.me/6281234567890" target="_blank" class="inline-flex items-center space-x-2 mt-3 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold hover:bg-emerald-500/30 transition">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                        <span>WhatsApp Official</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="pt-8 mt-8 border-t border-slate-800 text-center text-xs text-slate-500">
+                &copy; 2026 NEXTPLAY RENTAL. All Rights Reserved. Built with modern web standards.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initial Mock Data (PlayStation Consoles)
+        let consolesData = [
+            {
+                id: 1,
+                name: "PlayStation 5 Disc Edition",
+                gen: "PS5",
+                pricePerHour: 20000,
+                price3Hours: 54000,
+                price6Hours: 96000,
+                priceFullDay: 350000,
+                controllers: 2,
+                status: "Tersedia",
+                facilities: ["TV 4K HDR 55 Inch", "Sofa VIP", "50+ Game Digital Installed"],
+                image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80",
+                desc: "Konsol Next-Gen dengan grafis 4K 120 FPS, DualSense haptic feedback, dan SSD super cepat."
+            },
+            {
+                id: 2,
+                name: "PlayStation 4 Pro 1TB",
+                gen: "PS4",
+                pricePerHour: 12000,
+                price3Hours: 32000,
+                price6Hours: 60000,
+                priceFullDay: 200000,
+                controllers: 2,
+                status: "Tersedia",
+                facilities: ["TV Full HD 43 Inch", "DualShock 4 Original", "Bisa Main Online/Offline"],
+                image: "https://images.unsplash.com/photo-1507457379470-08b800bebc67?auto=format&fit=crop&w=600&q=80",
+                desc: "Performa stabil 4K gaming dengan ribuan pilihan game favorit sepanjang masa."
+            },
+            {
+                id: 3,
+                name: "PlayStation 3 Slim 500GB",
+                gen: "PS3",
+                pricePerHour: 8000,
+                price3Hours: 22000,
+                price6Hours: 40000,
+                priceFullDay: 130000,
+                controllers: 2,
+                status: "Sedang Disewa",
+                facilities: ["TV LED 32 Inch", "DualShock 3 Wireless", "Full Game Retro / HD Era"],
+                image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80",
+                desc: "Era keemasan game aksi & balap legendaris seperti GTA V & PES klasik."
+            },
+            {
+                id: 4,
+                name: "PlayStation 2 Matrix Harddisk",
+                gen: "PS2",
+                pricePerHour: 5000,
+                price3Hours: 13000,
+                price6Hours: 25000,
+                priceFullDay: 80000,
+                controllers: 2,
+                status: "Tersedia",
+                facilities: ["TV LED + Converter HD", "2 Controller Stik", "200+ Game Nostalgia"],
+                image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80",
+                desc: "Konsol terlaris di dunia! Mainkan Downhill, Guitar Hero, Winning Eleven 9, dll."
+            },
+            {
+                id: 5,
+                name: "PlayStation 1 Retro Classic",
+                gen: "PS1",
+                pricePerHour: 5000,
+                price3Hours: 13000,
+                price6Hours: 25000,
+                priceFullDay: 80000,
+                controllers: 2,
+                status: "Tersedia",
+                facilities: ["Memori Card Ready", "Dual Analog Controller", "Koleksi CD Game Classic"],
+                image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
+                desc: "Kembali ke masa kecil! Crash Bandicoot, CTR, Harvest Moon Back to Nature, Metal Slug."
+            }
+        ];
+
+        // Mock Packages Data
+        const packagesData = [
+            {
+                title: "Paket Hemat Mabar",
+                genTag: "PS4 / PS5",
+                hours: "3 Jam",
+                discount: "Hemat 10%",
+                badge: "POPULER",
+                desc: "Cocok untuk mabar eFootball / FIFA bareng teman di sore hari."
+            },
+            {
+                title: "Paket Maraton Gamer",
+                genTag: "Semua Konsol",
+                hours: "6 Jam",
+                discount: "Hemat 20%",
+                badge: "BEST VALUE",
+                desc: "Puas tamatin story mode game favorit tanpa khawatir kehabisan waktu."
+            },
+            {
+                title: "Paket Bawa Pulang 24 Jam",
+                genTag: "PS1 - PS5",
+                hours: "1 Hari Penuh",
+                discount: "Harga Spesial Harian",
+                badge: "HOME RENTAL",
+                desc: "Sewa unit konsol bawa pulang ke rumah lengkap dengan kabel & controller."
+            }
+        ];
+
+        // Mock Games Data
+        const gamesData = [
+            { title: "EA Sports FC 24 / FIFA", gen: "PS5", genre: "Sports", players: "1-4 Player", image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80" },
+            { title: "God of War Ragnarök", gen: "PS5", genre: "Action RPG", players: "1 Player", image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80" },
+            { title: "Spider-Man 2", gen: "PS5", genre: "Action Adventure", players: "1 Player", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=400&q=80" },
+            { title: "Tekken 8", gen: "PS5", genre: "Fighting", players: "1-2 Player", image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80" },
+            { title: "GTA V Premium Edition", gen: "PS4", genre: "Open World", players: "1 Player", image: "https://images.unsplash.com/photo-1507457379470-08b800bebc67?auto=format&fit=crop&w=400&q=80" },
+            { title: "eFootball 2024 / PES", gen: "PS4", genre: "Sports", players: "1-4 Player", image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80" },
+            { title: "Naruto Shippuden Storm 4", gen: "PS4", genre: "Fighting", players: "1-2 Player", image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=400&q=80" },
+            { title: "Downhill Domination", gen: "PS2", genre: "Racing Retro", players: "1-2 Player", image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80" },
+            { title: "Crash Team Racing (CTR)", gen: "PS1", genre: "Racing Classic", players: "1-4 Player", image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80" },
+            { title: "Harvest Moon BTN", gen: "PS1", genre: "Simulation", players: "1 Player", image: "https://images.unsplash.com/photo-1507457379470-08b800bebc67?auto=format&fit=crop&w=400&q=80" }
+        ];
+
+        // Mock Bookings State
+        let mockBookings = [
+            { id: "NX-8821", name: "Budi Santoso", phone: "081298765432", console: "PlayStation 5 Disc Edition", duration: 3, total: 54000, status: "Dikonfirmasi", date: "2026-10-22 14:00" },
+            { id: "NX-8822", name: "Rian Gamer", phone: "085711223344", console: "PlayStation 4 Pro 1TB", duration: 2, total: 24000, status: "Sedang Berlangsung", date: "2026-10-22 15:30" },
+            { id: "NX-8823", name: "Deni Retro", phone: "081344556677", console: "PlayStation 2 Matrix Harddisk", duration: 5, total: 25000, status: "Menunggu Konfirmasi", date: "2026-10-22 18:00" }
+        ];
+
+        // Global User State
+        let currentUser = null; // null or user object
+
+        // Format Currency Helper
+        function formatIDR(amount) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function showSection(sectionId) {
+            const sections = ['home', 'catalog', 'packages', 'games', 'location', 'user-dashboard', 'admin', 'docs'];
+            sections.forEach(sec => {
+                const el = document.getElementById(`sec-${sec}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const target = document.getElementById(`sec-${sectionId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- RENDERING FUNCTIONS ---
+        function renderHomeHighlights() {
+            const container = document.getElementById('homeConsoleGrid');
+            if (!container) return;
+            container.innerHTML = consolesData.map(item => `
+                <div class="glass-card rounded-2xl overflow-hidden glass-card-hover flex flex-col justify-between">
+                    <div>
+                        <div class="relative h-40 bg-slate-800">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                            <span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-slate-950/80 text-cyan-400 font-bold text-[10px] border border-cyan-500/30">${item.gen}</span>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="font-bold text-white text-sm line-clamp-1">${item.name}</h3>
+                            <div class="text-cyan-400 font-bold text-sm">${formatIDR(item.pricePerHour)} <span class="text-slate-400 text-[10px] font-normal">/ jam</span></div>
+                            <p class="text-slate-400 text-xs line-clamp-2">${item.desc}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0">
+                        <button onclick="quickBookConsole(${item.id})" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition">
+                            Sewa Sekarang
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let currentGenFilter = 'ALL';
+        function filterConsoleByGen(gen) {
+            currentGenFilter = gen;
+            // Highlight active button
+            document.querySelectorAll('.gen-filter-btn').forEach(btn => {
+                if (btn.innerText.includes(gen)) {
+                    btn.className = "gen-filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition bg-cyan-500 text-slate-950";
+                } else {
+                    btn.className = "gen-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700";
+                }
+            });
+            renderCatalogGrid();
+        }
+
+        function renderCatalogGrid() {
+            const container = document.getElementById('catalogConsoleGrid');
+            if (!container) return;
+
+            const searchKey = document.getElementById('consoleSearchInput')?.value.toLowerCase() || '';
+            const statusFilter = document.getElementById('consoleStatusFilter')?.value || 'ALL';
+            const sortFilter = document.getElementById('consoleSortFilter')?.value || 'default';
+
+            let filtered = consolesData.filter(item => {
+                const matchGen = currentGenFilter === 'ALL' || item.gen === currentGenFilter;
+                const matchSearch = item.name.toLowerCase().includes(searchKey) || item.gen.toLowerCase().includes(searchKey);
+                const matchStatus = statusFilter === 'ALL' || item.status === statusFilter;
+                return matchGen && matchSearch && matchStatus;
+            });
+
+            if (sortFilter === 'low') filtered.sort((a,b) => a.pricePerHour - b.pricePerHour);
+            if (sortFilter === 'high') filtered.sort((a,b) => b.pricePerHour - a.pricePerHour);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-sm">Tidak ada unit konsol yang sesuai dengan filter.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => `
+                <div class="glass-card rounded-3xl overflow-hidden border-slate-800 hover:border-cyan-500/40 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="relative h-48 bg-slate-900">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-slate-950/90 text-cyan-400 font-bold text-xs border border-cyan-500/30">${item.gen}</span>
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg text-xs font-bold ${
+                                item.status === 'Tersedia' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' :
+                                item.status === 'Sedang Disewa' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'bg-red-500/20 text-red-400 border border-red-500/40'
+                            }">${item.status}</span>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <h3 class="font-heading font-bold text-lg text-white">${item.name}</h3>
+                                <p class="text-slate-400 text-xs mt-1 leading-relaxed">${item.desc}</p>
+                            </div>
+
+                            <!-- Pricing Tiers -->
+                            <div class="grid grid-cols-2 gap-2 text-xs p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <div><span class="text-slate-400 block text-[10px]">Harga / Jam:</span> <strong class="text-cyan-400">${formatIDR(item.pricePerHour)}</strong></div>
+                                <div><span class="text-slate-400 block text-[10px]">Paket 3 Jam:</span> <strong class="text-slate-200">${formatIDR(item.price3Hours)}</strong></div>
+                                <div><span class="text-slate-400 block text-[10px]">Paket 6 Jam:</span> <strong class="text-slate-200">${formatIDR(item.price6Hours)}</strong></div>
+                                <div><span class="text-slate-400 block text-[10px]">24 Jam Bawa Pulang:</span> <strong class="text-indigo-400">${formatIDR(item.priceFullDay)}</strong></div>
+                            </div>
+
+                            <div class="space-y-1">
+                                <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Fasilitas Termasuk:</span>
+                                <ul class="text-xs text-slate-400 space-y-1">
+                                    ${item.facilities.map(f => `<li><i class="fa-solid fa-check text-cyan-400 mr-1.5 text-[10px]"></i>${f}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 pt-0">
+                        <button onclick="quickBookConsole(${item.id})" ${item.status !== 'Tersedia' ? 'disabled' : ''} class="w-full py-3 rounded-xl ${item.status === 'Tersedia' ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-neon-blue hover:opacity-90' : 'bg-slate-800 text-slate-500 cursor-not-allowed'} font-bold text-xs transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                            <span>${item.status === 'Tersedia' ? 'Sewa Konsol Ini' : 'Unit Tidak Tersedia'}</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPackagesGrid() {
+            const container = document.getElementById('packagesGrid');
+            if (!container) return;
+            container.innerHTML = packagesData.map(pkg => `
+                <div class="glass-card rounded-3xl p-6 border-slate-800 hover:border-indigo-500/40 transition space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 text-xs font-bold border border-indigo-500/30">${pkg.badge}</span>
+                            <span class="text-xs text-emerald-400 font-bold">${pkg.discount}</span>
+                        </div>
+                        <h3 class="font-heading font-bold text-xl text-white mt-3">${pkg.title}</h3>
+                        <div class="text-slate-400 text-xs mt-1">Khusus Konsol: ${pkg.genTag}</div>
+                        <p class="text-slate-300 text-xs mt-3 leading-relaxed">${pkg.desc}</p>
+                    </div>
+                    <button onclick="openBookingModal()" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition">
+                        Pilih Paket Ini
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderGamesGrid() {
+            const container = document.getElementById('gamesGrid');
+            if (!container) return;
+            const searchKey = document.getElementById('gameSearchInput')?.value.toLowerCase() || '';
+            const platform = document.getElementById('gamePlatformFilter')?.value || 'ALL';
+
+            const filtered = gamesData.filter(g => {
+                const matchPlat = platform === 'ALL' || g.gen === platform;
+                const matchSearch = g.title.toLowerCase().includes(searchKey) || g.genre.toLowerCase().includes(searchKey);
+                return matchPlat && matchSearch;
+            });
+
+            container.innerHTML = filtered.map(g => `
+                <div class="glass-card rounded-2xl overflow-hidden border-slate-800">
+                    <div class="relative h-36 bg-slate-900">
+                        <img src="${g.image}" alt="${g.title}" class="w-full h-full object-cover">
+                        <span class="absolute top-2 left-2 px-2 py-0.5 rounded bg-slate-950/80 text-cyan-400 text-[10px] font-bold border border-cyan-500/30">${g.gen}</span>
+                    </div>
+                    <div class="p-3 space-y-1">
+                        <h4 class="font-bold text-white text-xs line-clamp-1">${g.title}</h4>
+                        <div class="flex justify-between text-[10px] text-slate-400">
+                            <span>${g.genre}</span>
+                            <span class="text-cyan-400">${g.players}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderUserDashboard() {
+            const historyTable = document.getElementById('userBookingHistoryTable');
+            if (!historyTable) return;
+
+            if (mockBookings.length === 0) {
+                historyTable.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 text-xs">Belum ada riwayat transaksi.</td></tr>`;
+                return;
+            }
+
+            historyTable.innerHTML = mockBookings.map(b => `
+                <tr>
+                    <td class="p-3 font-mono text-cyan-400 font-bold">${b.id}</td>
+                    <td class="p-3">${b.console}</td>
+                    <td class="p-3 text-xs text-slate-400">${b.date} (${b.duration} jam)</td>
+                    <td class="p-3 font-bold text-white">${formatIDR(b.total)}</td>
+                    <td class="p-3">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                            b.status === 'Dikonfirmasi' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                            b.status === 'Sedang Berlangsung' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                        }">${b.status}</span>
+                    </td>
+                    <td class="p-3">
+                        <button onclick="confirmWA('${b.id}')" class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 text-xs font-semibold">
+                            <i class="fa-brands fa-whatsapp"></i> Chat WA
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAdminTables() {
+            // Bookings Admin Table
+            const admBookTable = document.getElementById('adminBookingsTable');
+            if (admBookTable) {
+                admBookTable.innerHTML = mockBookings.map((b, idx) => `
+                    <tr>
+                        <td class="p-3 font-mono text-xs text-cyan-400 font-bold">${b.id}</td>
+                        <td class="p-3">
+                            <div class="font-bold text-white text-xs">${b.name}</div>
+                            <div class="text-[10px] text-slate-400">${b.phone}</div>
+                        </td>
+                        <td class="p-3 text-xs">${b.console}</td>
+                        <td class="p-3 text-xs">${b.duration} Jam</td>
+                        <td class="p-3 font-bold text-xs text-emerald-400">${formatIDR(b.total)}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">${b.status}</span>
+                        </td>
+                        <td class="p-3">
+                            <select onchange="updateBookingStatus(${idx}, this.value)" class="px-2 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-slate-200">
+                                <option value="Menunggu Konfirmasi" ${b.status==='Menunggu Konfirmasi'?'selected':''}>Menunggu Konfirmasi</option>
+                                <option value="Dikonfirmasi" ${b.status==='Dikonfirmasi'?'selected':''}>Dikonfirmasi</option>
+                                <option value="Sedang Berlangsung" ${b.status==='Sedang Berlangsung'?'selected':''}>Sedang Berlangsung</option>
+                                <option value="Selesai" ${b.status==='Selesai'?'selected':''}>Selesai</option>
+                                <option value="Dibatalkan" ${b.status==='Dibatalkan'?'selected':''}>Dibatalkan</option>
+                            </select>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Consoles CRUD Admin Table
+            const admConsTable = document.getElementById('adminConsolesTable');
+            if (admConsTable) {
+                admConsTable.innerHTML = consolesData.map((c, idx) => `
+                    <tr>
+                        <td class="p-3"><img src="${c.image}" class="w-10 h-10 object-cover rounded-lg"></td>
+                        <td class="p-3 font-bold text-white text-xs">${c.name}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-bold">${c.gen}</span></td>
+                        <td class="p-3 text-xs font-mono">${formatIDR(c.pricePerHour)}</td>
+                        <td class="p-3">
+                            <select onchange="updateConsoleStatus(${idx}, this.value)" class="px-2 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-slate-200">
+                                <option value="Tersedia" ${c.status==='Tersedia'?'selected':''}>Tersedia</option>
+                                <option value="Sedang Disewa" ${c.status==='Sedang Disewa'?'selected':''}>Sedang Disewa</option>
+                                <option value="Maintenance" ${c.status==='Maintenance'?'selected':''}>Maintenance</option>
+                            </select>
+                        </td>
+                        <td class="p-3">
+                            <button onclick="deleteConsole(${idx})" class="p-1.5 rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // --- BOOKING LOGIC & REAL-TIME CALCULATOR ---
+        function openBookingModal() {
+            const select = document.getElementById('bookConsoleSelect');
+            if (select) {
+                select.innerHTML = consolesData.map(c => `
+                    <option value="${c.id}">${c.name} (${c.gen}) - ${formatIDR(c.pricePerHour)}/jam</option>
+                `).join('');
+            }
+            // Set default date
+            const dateInput = document.getElementById('bookDate');
+            if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+
+            updateBookingCalc();
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+
+        function quickBookConsole(consoleId) {
+            openBookingModal();
+            const select = document.getElementById('bookConsoleSelect');
+            if (select) select.value = consoleId;
+            updateBookingCalc();
+        }
+
+        function updateBookingCalc() {
+            const consoleId = document.getElementById('bookConsoleSelect')?.value;
+            const packageType = document.getElementById('bookPackageSelect')?.value;
+            let duration = parseInt(document.getElementById('bookDuration')?.value || 1);
+
+            const selectedConsole = consolesData.find(c => c.id == consoleId) || consolesData[0];
+            let baseRate = selectedConsole.pricePerHour;
+            let totalPrice = baseRate * duration;
+            let discount = 0;
+
+            if (packageType === '3hours') {
+                duration = 3;
+                if(document.getElementById('bookDuration')) document.getElementById('bookDuration').value = 3;
+                totalPrice = selectedConsole.price3Hours;
+                discount = (baseRate * 3) - totalPrice;
+            } else if (packageType === '6hours') {
+                duration = 6;
+                if(document.getElementById('bookDuration')) document.getElementById('bookDuration').value = 6;
+                totalPrice = selectedConsole.price6Hours;
+                discount = (baseRate * 6) - totalPrice;
+            } else if (packageType === 'fullday') {
+                duration = 24;
+                if(document.getElementById('bookDuration')) document.getElementById('bookDuration').value = 24;
+                totalPrice = selectedConsole.priceFullDay;
+                discount = (baseRate * 24) - totalPrice;
+            }
+
+            document.getElementById('calcBasePrice').innerText = `${formatIDR(baseRate)} / jam`;
+            document.getElementById('calcDiscount').innerText = `- ${formatIDR(Math.max(0, discount))}`;
+            document.getElementById('calcTotalPrice').innerText = formatIDR(totalPrice);
+        }
+
+        function handleBookingSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('bookName').value;
+            const phone = document.getElementById('bookPhone').value;
+            const consoleId = document.getElementById('bookConsoleSelect').value;
+            const selectedConsole = consolesData.find(c => c.id == consoleId);
+            const duration = document.getElementById('bookDuration').value;
+            const date = document.getElementById('bookDate').value;
+            const time = document.getElementById('bookTime').value;
+            const payMethod = document.getElementById('bookPaymentMethod').value;
+            const totalPrice = document.getElementById('calcTotalPrice').innerText;
+
+            const bookingCode = `NX-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            const newBooking = {
+                id: bookingCode,
+                name: name,
+                phone: phone,
+                console: selectedConsole.name,
+                duration: parseInt(duration),
+                total: parseInt(totalPrice.replace(/[^0-9]/g, '')),
+                status: "Menunggu Konfirmasi",
+                date: `${date} ${time}`
+            };
+
+            mockBookings.unshift(newBooking);
+            showToast(`Booking ${bookingCode} Berhasil Dibuat! Meneruskan ke WA...`, 'success');
+
+            // Format WhatsApp Message
+            const waMsg = `Halo Admin NEXTPLAY RENTAL,%0A%0ASaya ingin mengonfirmasi Booking Sewa PlayStation:%0A- *Kode Booking:* ${bookingCode}%0A- *Nama:* ${name}%0A- *Nomor WA:* ${phone}%0A- *Unit Konsol:* ${selectedConsole.name}%0A- *Jadwal Sewa:* ${date} jam ${time}%0A- *Durasi:* ${duration} Jam%0A- *Total Estimasi:* ${totalPrice}%0A- *Metode Bayar:* ${payMethod}%0A%0AMohon verifikasi ketersediaan dan instruksi selanjutnya. Terima kasih!`;
+
+            closeBookingModal();
+            renderUserDashboard();
+            renderAdminTables();
+
+            setTimeout(() => {
+                window.open(`https://wa.me/6281234567890?text=${waMsg}`, '_blank');
+            }, 800);
+        }
+
+        // --- AUTH & ADMIN MODAL LOGIC ---
+        function openAuthModal(mode) {
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const user = document.getElementById('loginUser').value;
+            currentUser = { name: user, phone: user };
+            
+            showToast(`Selamat Datang, ${user}!`, 'success');
+            closeAuthModal();
+            updateAuthUI();
+            showSection('user-dashboard');
+        }
+
+        function loginAsAdminDemo() {
+            closeAuthModal();
+            showToast('Login sebagai Demo Admin Berhasil!', 'info');
+            showSection('admin');
+            renderAdminTables();
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            updateAuthUI();
+            showToast('Anda telah logout.', 'info');
+            showSection('home');
+        }
+
+        function updateAuthUI() {
+            const container = document.getElementById('userAuthBtns');
+            if (currentUser) {
+                container.innerHTML = `
+                    <button onclick="showSection('user-dashboard')" class="px-4 py-2 rounded-xl bg-slate-800 text-cyan-400 border border-slate-700 text-xs font-bold">
+                        <i class="fa-solid fa-user mr-1"></i> Akun Saya
+                    </button>
+                `;
+                document.getElementById('userDashboardName').innerText = currentUser.name;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition">
+                        Login
+                    </button>
+                `;
+            }
+        }
+
+        // --- ADMIN FUNCTIONS ---
+        function switchAdminTab(tab) {
+            document.getElementById('admTabBookings').classList.add('hidden');
+            document.getElementById('admTabConsoles').classList.add('hidden');
+            document.getElementById('admTabGames').classList.add('hidden');
+
+            document.getElementById('tabBtnBookings').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm whitespace-nowrap";
+            document.getElementById('tabBtnConsoles').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm whitespace-nowrap";
+            document.getElementById('tabBtnGames').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm whitespace-nowrap";
+
+            if (tab === 'bookings') {
+                document.getElementById('admTabBookings').classList.remove('hidden');
+                document.getElementById('tabBtnBookings').className = "pb-3 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm whitespace-nowrap";
+            } else if (tab === 'consoles') {
+                document.getElementById('admTabConsoles').classList.remove('hidden');
+                document.getElementById('tabBtnConsoles').className = "pb-3 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm whitespace-nowrap";
+            } else if (tab === 'games') {
+                document.getElementById('admTabGames').classList.remove('hidden');
+                document.getElementById('tabBtnGames').className = "pb-3 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm whitespace-nowrap";
+            }
+        }
+
+        function updateBookingStatus(index, newStatus) {
+            mockBookings[index].status = newStatus;
+            showToast(`Status Booking ${mockBookings[index].id} diubah ke '${newStatus}'`, 'info');
+            renderUserDashboard();
+            renderAdminTables();
+        }
+
+        function updateConsoleStatus(index, newStatus) {
+            consolesData[index].status = newStatus;
+            showToast(`Status ${consolesData[index].name} diubah ke '${newStatus}'`, 'info');
+            renderHomeHighlights();
+            renderCatalogGrid();
+            renderAdminTables();
+        }
+
+        function deleteConsole(index) {
+            if (confirm(`Hapus unit ${consolesData[index].name} dari sistem?`)) {
+                consolesData.splice(index, 1);
+                showToast('Unit konsol berhasil dihapus.', 'info');
+                renderHomeHighlights();
+                renderCatalogGrid();
+                renderAdminTables();
+            }
+        }
+
+        function openAddConsoleModal() {
+            document.getElementById('addConsoleModal').classList.remove('hidden');
+        }
+        function closeAddConsoleModal() {
+            document.getElementById('addConsoleModal').classList.add('hidden');
+        }
+
+        function handleAddConsoleSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('newConsName').value;
+            const gen = document.getElementById('newConsGen').value;
+            const price = parseInt(document.getElementById('newConsPrice').value);
+            const img = document.getElementById('newConsImg').value || "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80";
+
+            const newUnit = {
+                id: consolesData.length + 1,
+                name: name,
+                gen: gen,
+                pricePerHour: price,
+                price3Hours: price * 3 * 0.9,
+                price6Hours: price * 6 * 0.8,
+                priceFullDay: price * 24 * 0.7,
+                controllers: 2,
+                status: "Tersedia",
+                facilities: ["TV Smart HD", "2 Controller Wireless"],
+                image: img,
+                desc: "Unit konsol baru ditambahkan oleh administrator."
+            };
+
+            consolesData.push(newUnit);
+            showToast('Konsol baru berhasil ditambahkan!', 'success');
+            closeAddConsoleModal();
+            renderHomeHighlights();
+            renderCatalogGrid();
+            renderAdminTables();
+        }
+
+        function confirmWA(bookingId) {
+            const b = mockBookings.find(item => item.id === bookingId);
+            if (!b) return;
+            const waMsg = `Halo Admin, saya mau tanya update untuk kode booking *${b.id}* atas nama ${b.name}.`;
+            window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(waMsg)}`, '_blank');
+        }
+
+        // --- TOAST ALERT SYSTEM ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto px-4 py-3 rounded-xl glass-card text-xs font-bold shadow-lg border flex items-center space-x-2 transition-all transform translate-y-2 opacity-0 ${
+                type === 'success' ? 'border-emerald-500/50 text-emerald-300' : 'border-cyan-500/50 text-cyan-300'
+            }`;
+
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-circle-info text-cyan-400'}"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // --- INIT ON LOAD ---
+        window.onload = function() {
+            lucide.createIcons();
+            renderHomeHighlights();
+            renderCatalogGrid();
+            renderPackagesGrid();
+            renderGamesGrid();
+            renderUserDashboard();
+            renderAdminTables();
+        };
+    </script>
+</body>
+</html>
