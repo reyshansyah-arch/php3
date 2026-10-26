@@ -120,8 +120,8 @@
                     <span>Booking Sekarang</span>
                 </button>
                 <div id="userAuthBtns" class="flex items-center space-x-2">
-                    <button onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition">
-                        Login
+                    <button onclick="openAuthModal('admin')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition">
+                        Login Admin
                     </button>
                 </div>
             </div>
@@ -142,7 +142,7 @@
             <button onclick="showSection('docs'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded-lg text-amber-400 hover:bg-slate-800"><i class="fa-solid fa-code text-xs mr-1"></i> Dokumentasi Backend</button>
             <div class="pt-3 border-t border-slate-800 flex flex-col gap-2">
                 <button onclick="openBookingModal(); toggleMobileMenu();" class="w-full py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-center">Booking Sekarang</button>
-                <button onclick="openAuthModal('login'); toggleMobileMenu();" class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 font-medium text-center">Login / Account</button>
+                <button onclick="openAuthModal('admin'); toggleMobileMenu();" class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 font-medium text-center">Login Admin</button>
             </div>
         </div>
     </header>
@@ -473,50 +473,6 @@
             </div>
         </section>
 
-        <section id="sec-user-dashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-            <div class="glass-card rounded-3xl p-6 sm:p-8 border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="flex items-center space-x-4">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-2xl font-bold text-white shadow-neon-blue">
-                        <span id="userAvatarText">U</span>
-                    </div>
-                    <div>
-                        <h1 id="userDashboardName" class="font-heading text-2xl font-bold text-white">Akun Pelanggan</h1>
-                        <p id="userDashboardPhone" class="text-slate-400 text-sm">+62 812-xxxx-xxxx</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <button onclick="openBookingModal()" class="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400 transition">
-                        + Booking Baru
-                    </button>
-                    <button onclick="logoutUser()" class="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/20 transition">
-                        Logout
-                    </button>
-                </div>
-            </div>
-
-            <!-- Booking History Table -->
-            <div class="glass-card rounded-3xl p-6 border-slate-800">
-                <h2 class="font-heading text-lg font-bold text-white mb-4">Riwayat Booking Anda</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900/80 text-xs uppercase text-slate-400 font-semibold border-b border-slate-800">
-                            <tr>
-                                <th class="p-3">Kode Booking</th>
-                                <th class="p-3">Konsol & Paket</th>
-                                <th class="p-3">Tanggal & Jam</th>
-                                <th class="p-3">Total Bayar</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userBookingHistoryTable" class="divide-y divide-slate-800">
-                            <!-- Dynamic Content -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
         <section id="sec-admin" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
                 <div>
@@ -838,28 +794,9 @@ CREATE TABLE bookings (
             </button>
 
             <div id="loginBox">
-                <div class="flex gap-2 mb-5">
-                    <button onclick="switchLoginMode('customer')" id="customerLoginTab" class="flex-1 py-2 rounded-lg bg-cyan-500 text-slate-950 text-xs font-bold">Pelanggan</button>
-                    <button onclick="switchLoginMode('admin')" id="adminLoginTab" class="flex-1 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold">Administrator</button>
-                </div>
-                <h2 class="font-heading text-xl font-bold text-white mb-1">Masuk Akun Pelanggan</h2>
-                <p class="text-xs text-slate-400 mb-6">Gunakan nomor WhatsApp dan kata sandi yang diberikan admin.</p>
-                
-                <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">Nomor WhatsApp / Email</label>
-                        <input type="text" id="loginUser" required placeholder="08123456789" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
-                        <input type="password" id="loginPass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none">
-                    </div>
-                    <button type="submit" class="w-full py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold text-sm hover:bg-cyan-400 transition">
-                        Masuk sebagai Pelanggan
-                    </button>
-                </form>
-                <p class="text-xs text-center text-slate-500 mt-4">Akun pelanggan hanya dapat dibuat oleh administrator.</p>
-                <form id="adminLoginForm" onsubmit="handleAdminLoginSubmit(event)" class="hidden space-y-4">
+                <h2 class="font-heading text-xl font-bold text-white mb-1">Masuk Administrator</h2>
+                <p class="text-xs text-slate-400 mb-6">Masuk untuk mengelola booking, pelanggan, dan unit PlayStation.</p>
+                <form id="adminLoginForm" onsubmit="handleAdminLoginSubmit(event)" class="space-y-4">
                     <div><label class="block text-xs font-semibold text-slate-300 mb-1">Email Administrator</label><input type="email" id="adminLoginEmail" required placeholder="admin@nextplay.local" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none"></div>
                     <div><label class="block text-xs font-semibold text-slate-300 mb-1">Kata Sandi</label><input type="password" id="adminLoginPassword" required placeholder="Masukkan kata sandi admin" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none"></div>
                     <button type="submit" class="w-full py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold text-sm hover:bg-cyan-400 transition">Masuk Dashboard Admin</button>
@@ -908,13 +845,12 @@ CREATE TABLE bookings (
             <button onclick="closeAddCustomerModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center" aria-label="Tutup">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <h2 class="font-heading text-lg font-bold text-white mb-1">Buat Akun Pelanggan</h2>
-            <p class="text-xs text-slate-400 mb-5">Berikan nomor WhatsApp dan kata sandi ini kepada pelanggan.</p>
+            <h2 class="font-heading text-lg font-bold text-white mb-1">Tambah Data Pelanggan</h2>
+            <p class="text-xs text-slate-400 mb-5">Simpan nama dan nomor WhatsApp untuk administrasi booking.</p>
             <form onsubmit="handleAddCustomerSubmit(event)" class="space-y-3">
                 <div><label class="block text-xs text-slate-300 mb-1">Nama lengkap</label><input id="newCustomerName" required maxlength="80" class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-sm text-white"></div>
-                <div><label class="block text-xs text-slate-300 mb-1">Nomor WhatsApp (sebagai ID login)</label><input id="newCustomerPhone" type="tel" required maxlength="20" class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-sm text-white"></div>
-                <div><label class="block text-xs text-slate-300 mb-1">Kata sandi awal</label><input id="newCustomerPassword" type="password" required minlength="6" class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-sm text-white"></div>
-                <button type="submit" class="w-full py-2.5 rounded-lg bg-cyan-500 text-slate-950 font-bold text-sm mt-2">Buat Akun</button>
+                <div><label class="block text-xs text-slate-300 mb-1">Nomor WhatsApp</label><input id="newCustomerPhone" type="tel" required maxlength="20" class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-sm text-white"></div>
+                <button type="submit" class="w-full py-2.5 rounded-lg bg-cyan-500 text-slate-950 font-bold text-sm mt-2">Simpan Pelanggan</button>
             </form>
         </div>
     </div>
@@ -1104,6 +1040,11 @@ CREATE TABLE bookings (
             consolesData = JSON.parse(localStorage.getItem('nextplayConsoles')) || consolesData;
             mockBookings = JSON.parse(localStorage.getItem('nextplayBookings')) || mockBookings;
             customerAccounts = JSON.parse(localStorage.getItem('nextplayCustomers')) || [];
+            customerAccounts = Array.isArray(customerAccounts) ? customerAccounts.map(customer => ({
+                name: customer.name,
+                phone: customer.phone,
+                createdAt: customer.createdAt || new Date().toISOString()
+            })) : [];
         } catch (error) {
             console.warn('Data lokal tidak dapat dibaca, menggunakan data awal.', error);
         }
@@ -1115,7 +1056,9 @@ CREATE TABLE bookings (
         // Global User State
         let currentUser = null;
         try {
-            currentUser = JSON.parse(sessionStorage.getItem('nextplaySession')) || null;
+            const savedSession = JSON.parse(sessionStorage.getItem('nextplaySession'));
+            currentUser = savedSession?.role === 'admin' ? savedSession : null;
+            if (!currentUser) sessionStorage.removeItem('nextplaySession');
         } catch (error) {
             sessionStorage.removeItem('nextplaySession');
         }
@@ -1134,14 +1077,10 @@ CREATE TABLE bookings (
         // --- NAVIGATION LOGIC ---
         function showSection(sectionId) {
             if (sectionId === 'admin' && currentUser?.role !== 'admin') {
-                openAuthModal('admin');
+                openAuthModal();
                 return;
             }
-            if (sectionId === 'user-dashboard' && currentUser?.role !== 'customer') {
-                openAuthModal('customer');
-                return;
-            }
-            const sections = ['home', 'catalog', 'packages', 'games', 'location', 'user-dashboard', 'admin', 'docs'];
+            const sections = ['home', 'catalog', 'packages', 'games', 'location', 'admin', 'docs'];
             sections.forEach(sec => {
                 const el = document.getElementById(`sec-${sec}`);
                 if (el) el.classList.add('hidden');
@@ -1316,37 +1255,6 @@ CREATE TABLE bookings (
             `).join('');
         }
 
-        function renderUserDashboard() {
-            const historyTable = document.getElementById('userBookingHistoryTable');
-            if (!historyTable) return;
-
-            const customerBookings = mockBookings.filter(booking => booking.phone === currentUser?.phone);
-            if (customerBookings.length === 0) {
-                historyTable.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 text-xs">Belum ada riwayat transaksi.</td></tr>`;
-                return;
-            }
-
-            historyTable.innerHTML = customerBookings.map(b => `
-                <tr>
-                    <td class="p-3 font-mono text-cyan-400 font-bold">${b.id}</td>
-                    <td class="p-3">${b.console}</td>
-                    <td class="p-3 text-xs text-slate-400">${b.date} (${b.duration} jam)</td>
-                    <td class="p-3 font-bold text-white">${formatIDR(b.total)}</td>
-                    <td class="p-3">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                            b.status === 'Dikonfirmasi' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                            b.status === 'Sedang Berlangsung' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                        }">${b.status}</span>
-                    </td>
-                    <td class="p-3">
-                        <button onclick="confirmWA('${b.id}')" class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 text-xs font-semibold">
-                            <i class="fa-brands fa-whatsapp"></i> Chat WA
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
         function renderAdminTables() {
             // Bookings Admin Table
             const admBookTable = document.getElementById('adminBookingsTable');
@@ -1412,7 +1320,7 @@ CREATE TABLE bookings (
                         <td class="p-3 text-xs text-slate-400">${new Date(customer.createdAt).toLocaleDateString('id-ID')}</td>
                         <td class="p-3"><button onclick="deleteCustomer(${idx})" class="px-2 py-1 rounded bg-red-500/10 text-red-300 text-xs hover:bg-red-500/20">Hapus</button></td>
                     </tr>
-                `).join('') : `<tr><td colspan="4" class="p-4 text-center text-slate-500 text-xs">Belum ada akun pelanggan.</td></tr>`;
+                `).join('') : `<tr><td colspan="4" class="p-4 text-center text-slate-500 text-xs">Belum ada data pelanggan.</td></tr>`;
             }
 
             const activeRentalCount = mockBookings.filter(booking => booking.status === 'Sedang Berlangsung').length;
@@ -1442,10 +1350,6 @@ CREATE TABLE bookings (
             if (!consolesData.some(console => console.status === 'Tersedia')) {
                 showToast('Belum ada unit PlayStation yang tersedia.', 'error');
                 return;
-            }
-            if (currentUser?.role === 'customer') {
-                document.getElementById('bookName').value = currentUser.name;
-                document.getElementById('bookPhone').value = currentUser.phone;
             }
             // Set default date
             const dateInput = document.getElementById('bookDate');
@@ -1500,8 +1404,8 @@ CREATE TABLE bookings (
 
         function handleBookingSubmit(e) {
             e.preventDefault();
-            const name = currentUser?.role === 'customer' ? currentUser.name : document.getElementById('bookName').value.trim();
-            const phone = currentUser?.role === 'customer' ? currentUser.phone : document.getElementById('bookPhone').value.trim();
+            const name = document.getElementById('bookName').value.trim();
+            const phone = document.getElementById('bookPhone').value.trim();
             const consoleId = document.getElementById('bookConsoleSelect').value;
             const selectedConsole = consolesData.find(c => c.id == consoleId);
             const duration = document.getElementById('bookDuration').value;
@@ -1531,7 +1435,6 @@ CREATE TABLE bookings (
             const waMsg = `Halo Admin NEXTPLAY RENTAL,%0A%0ASaya ingin mengonfirmasi Booking Sewa PlayStation:%0A- *Kode Booking:* ${bookingCode}%0A- *Nama:* ${name}%0A- *Nomor WA:* ${phone}%0A- *Unit Konsol:* ${selectedConsole.name}%0A- *Jadwal Sewa:* ${date} jam ${time}%0A- *Durasi:* ${duration} Jam%0A- *Total Estimasi:* ${totalPrice}%0A- *Metode Bayar:* ${payMethod}%0A%0AMohon verifikasi ketersediaan dan instruksi selanjutnya. Terima kasih!`;
 
             closeBookingModal();
-            renderUserDashboard();
             renderAdminTables();
 
             setTimeout(() => {
@@ -1540,40 +1443,11 @@ CREATE TABLE bookings (
         }
 
         // --- AUTH & ADMIN MODAL LOGIC ---
-        function openAuthModal(mode = 'customer') {
+        function openAuthModal() {
             document.getElementById('authModal').classList.remove('hidden');
-            switchLoginMode(mode);
         }
         function closeAuthModal() {
             document.getElementById('authModal').classList.add('hidden');
-        }
-
-        function switchLoginMode(mode) {
-            const adminMode = mode === 'admin';
-            document.getElementById('loginBox').querySelector('h2').innerText = adminMode ? 'Masuk Administrator' : 'Masuk Akun Pelanggan';
-            document.getElementById('loginBox').querySelector('p').innerText = adminMode ? 'Akses dashboard pengelolaan NEXTPLAY.' : 'Gunakan nomor WhatsApp dan kata sandi yang diberikan admin.';
-            document.querySelector('#loginBox form').classList.toggle('hidden', adminMode);
-            document.getElementById('adminLoginForm').classList.toggle('hidden', !adminMode);
-            document.getElementById('customerLoginTab').className = `flex-1 py-2 rounded-lg ${adminMode ? 'bg-slate-800 text-slate-300' : 'bg-cyan-500 text-slate-950'} text-xs font-bold`;
-            document.getElementById('adminLoginTab').className = `flex-1 py-2 rounded-lg ${adminMode ? 'bg-cyan-500 text-slate-950' : 'bg-slate-800 text-slate-300'} text-xs font-bold`;
-        }
-
-        function handleLoginSubmit(e) {
-            e.preventDefault();
-            const login = document.getElementById('loginUser').value.trim();
-            const password = document.getElementById('loginPass').value;
-            const account = customerAccounts.find(customer => customer.phone === login && customer.password === password);
-            if (!account) {
-                showToast('Nomor WhatsApp atau kata sandi tidak sesuai.', 'error');
-                return;
-            }
-            currentUser = { name: account.name, phone: account.phone, role: 'customer' };
-            sessionStorage.setItem('nextplaySession', JSON.stringify(currentUser));
-            showToast(`Selamat datang, ${account.name}!`, 'success');
-            closeAuthModal();
-            updateAuthUI();
-            renderUserDashboard();
-            showSection('user-dashboard');
         }
 
         function handleAdminLoginSubmit(e) {
@@ -1603,22 +1477,17 @@ CREATE TABLE bookings (
 
         function updateAuthUI() {
             const container = document.getElementById('userAuthBtns');
-            if (currentUser) {
+            if (currentUser?.role === 'admin') {
                 container.innerHTML = `
-                    <button onclick="showSection('${currentUser.role === 'admin' ? 'admin' : 'user-dashboard'}')" class="px-4 py-2 rounded-xl bg-slate-800 text-cyan-400 border border-slate-700 text-xs font-bold">
-                        <i class="fa-solid ${currentUser.role === 'admin' ? 'fa-shield-halved' : 'fa-user'} mr-1"></i> ${currentUser.role === 'admin' ? 'Dashboard Admin' : 'Akun Saya'}
+                    <button onclick="showSection('admin')" class="px-4 py-2 rounded-xl bg-slate-800 text-cyan-400 border border-slate-700 text-xs font-bold">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> Dashboard Admin
                     </button>
                     <button onclick="logoutUser()" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 text-xs">Keluar</button>
                 `;
-                if (currentUser.role === 'customer') {
-                    document.getElementById('userDashboardName').innerText = currentUser.name;
-                    document.getElementById('userDashboardPhone').innerText = currentUser.phone;
-                    document.getElementById('userAvatarText').innerText = currentUser.name.charAt(0).toUpperCase();
-                }
             } else {
                 container.innerHTML = `
-                    <button onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition">
-                        Login
+                    <button onclick="openAuthModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition">
+                        Login Admin
                     </button>
                 `;
             }
@@ -1640,19 +1509,17 @@ CREATE TABLE bookings (
             event.preventDefault();
             const name = document.getElementById('newCustomerName').value.trim();
             const phone = document.getElementById('newCustomerPhone').value.trim();
-            const password = document.getElementById('newCustomerPassword').value;
             if (customerAccounts.some(customer => customer.phone === phone)) {
-                showToast('Nomor WhatsApp tersebut sudah memiliki akun.', 'error');
+                showToast('Nomor WhatsApp tersebut sudah terdaftar.', 'error');
                 return;
             }
-            customerAccounts.push({ name, phone, password, createdAt: new Date().toISOString() });
+            customerAccounts.push({ name, phone, createdAt: new Date().toISOString() });
             persistAppData();
             document.getElementById('newCustomerName').value = '';
             document.getElementById('newCustomerPhone').value = '';
-            document.getElementById('newCustomerPassword').value = '';
             closeAddCustomerModal();
             renderAdminTables();
-            showToast(`Akun untuk ${name} berhasil dibuat.`, 'success');
+            showToast(`Data pelanggan ${name} berhasil disimpan.`, 'success');
         }
 
         function deleteCustomer(index) {
@@ -1704,7 +1571,6 @@ CREATE TABLE bookings (
             }
             persistAppData();
             showToast(`Status Booking ${mockBookings[index].id} diubah ke '${newStatus}'`, 'info');
-            renderUserDashboard();
             renderAdminTables();
             renderHomeHighlights();
             renderCatalogGrid();
@@ -1820,7 +1686,6 @@ CREATE TABLE bookings (
             renderCatalogGrid();
             renderPackagesGrid();
             renderGamesGrid();
-            renderUserDashboard();
             renderAdminTables();
         };
     </script>
